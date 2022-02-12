@@ -13,19 +13,19 @@ class VideoGame {
 }
 
 async function getVideoGames(request, response) {
-    const key = 'videoGame-' + searchQuery;
-    const searchQuery = request.query.searchQuery;
-    if (cache[key] && (Date.now() - cache[key].timestamp < 50000)) {
-        console.log('videoGame:', 'Cache hit');
-    } else {
-        cache[key] = {};
-        cache[key].timestamp = Date.now();
+    // const key = 'videoGame-' + searchQuery;
+    // const searchQuery = request.query.searchQuery;
+    // if (cache[key] && (Date.now() - cache[key].timestamp < 50000)) {
+    //     console.log('videoGame:', 'Cache hit');
+    // } else {
+        // cache[key] = {};
+        // cache[key].timestamp = Date.now();
         console.log('videoGame:', 'Cache miss!');
         console.log(response.data);
-        cache[key].data = `https://opentdb.com/api.php?amount=10&category=15&difficulty=easy`;
+        data = `https://opentdb.com/api.php?amount=10&category=15&difficulty=easy`;
         let videoGamesResponse = await axios({
             method: 'get',
-            url: cache[key].data,
+            url: data,
         });
         try {
             console.log(videoGamesResponse.data.results);
@@ -39,7 +39,7 @@ async function getVideoGames(request, response) {
             return Promise.reject(e);
         }
     }
-}
+
 
 //   } catch (error) {
 //     response.status(503).send('videoGames not found');
