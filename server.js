@@ -10,7 +10,10 @@ app.use(express.json());
 const mongoose = require('mongoose');
 const ex = require('./models/ex.js');
 const scoreModel = require('./models/scoreModel.js');
-// const verifyUser = require('./authentication.js');
+const clear = require('./clear.js');
+
+
+const verifyUser = require('./authentication.js');
 const PORT = process.env.PORT || 3001;
 const getVideoGames = require('./module/triviaVideoGame.js');
 
@@ -37,49 +40,38 @@ app.get('/', (request, response) => {
 
 app.post('/scores', handlePostScores);
 app.get('/scores', handleGetScores);
+app.get('/scores/clear', clear.clear);
+app.get('/scores/update/:id', handleUpdateScores);
 app.delete('/scores/:id', handleDeleteScores);
 app.put('/scores/:id', handleUpdateScores);
-// app.get('/user', handleGetUser);
+app.get('/user', handleGetUser);
 
 
 const Data = { };
 
-async function handlePostScores1(request, response) {
-    // take score and pass to mongo
-    
-    try {
-        let queryObj = {};
-        console.log(request);
-        if (request.body.score) {
-            queryObj = { score: request.body.score,
-            email: request.query.email }
-            console.log(request.body.score)
-        }
-        let newScore = await scoreModel.create(request.body)
-        console.log(newScore);
-
-        if (newScore) {
-            response.status(201).send(newScore);
-        } else {
-            response.status(500).send("Sorry, but your score could not be added. WOMP WOMP");
-        }
-
-        
-    } catch (error) {
-        console.error(error);
-        response.status(500).send('Sorry, but your score could not be added. WOMP WOMP');
+function handleGetUser(req, res) {
+  // verifyUser is defined in the auth.js
+  verifyUser(req, (err, user) => {
+    // "error-first" function
+    if (err) {
+      // if there is a problem verifying you
+      res.send('invalid token');
+    } else {
+      // if there is not a problem verifying you
+      res.send(user);
     }
+  })
 }
 
 async function handlePostScores(request, response) {
   // take score and pass to mongo
-  
+  console.log(request.body)
   try {
       let queryObj = {};
-      if (request.query.score) {
-          queryObj = { score: request.query.score,
-          email: request.query.email }
-          console.log(typeof request.query.score)
+      if (request.body.score) {
+          queryObj = { score: request.body.score,
+          email: request.body.email }
+          
       }
       let newScore = await scoreModel.create(queryObj)
 
