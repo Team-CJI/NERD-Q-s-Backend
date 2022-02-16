@@ -7,11 +7,11 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 mongoose.connect(process.env.DB_URI);
-const Ex = require('./models/ex');
+const scoreModel = require('./models/scoreModel');
 
 async function clear() {
     try {
-        await Ex.deleteMany({});
+        await scoreModel.deleteMany({});
         console.log('Trivia cleared!');
     } catch (error) {
         console.error(error);
@@ -20,4 +20,7 @@ async function clear() {
     }
 }
 
-clear();
+
+module.exports = {
+    clear: clear
+  };
